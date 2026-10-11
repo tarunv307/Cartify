@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cartify — Compare prices. Shop smarter.</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- ============ LOGIN SCREEN ============ -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-logo">CF</div>
+        <h1>Cartify</h1>
+        <p>Compare prices across every store</p>
+      </div>
+
+      <!-- Mobile step -->
+      <div id="loginStepMobile">
+        <div class="login-field">
+          <label class="login-label">Mobile Number</label>
+          <div class="login-mobile-row">
+            <div class="login-cc">+91</div>
+            <input class="login-input" id="loginMobile" type="tel" inputmode="numeric" maxlength="10"
+              placeholder="Enter 10-digit mobile" autofocus>
+          </div>
+          <p class="login-error" id="loginMobileErr">Please enter a valid 10-digit mobile number</p>
+        </div>
+
+        <div class="login-terms">
+          <input type="checkbox" id="loginTerms">
+          <label for="loginTerms">I agree to Cartify's <b>Terms</b> and <b>Privacy Policy</b>, and consent to receive
+            updates.</label>
+        </div>
+
+        <button class="login-btn" id="loginSendBtn">Send OTP</button>
+
+        <div class="login-divider">or</div>
+
+        <button class="login-guest" id="loginGuestBtn">Continue as Guest</button>
+
+        <div class="login-perks">
+          <div class="login-perk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Compare prices across 7 stores instantly
+          </div>
+          <div class="login-perk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Auto-detect location for accurate delivery
+          </div>
+          <div class="login-perk">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+              stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            Save wishlist and track price alerts
+          </div>
+        </div>
+      </div>
+
+      <!-- OTP step -->
+      <div id="loginStepOtp" hidden>
+        <div class="login-otp-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M4 4h16v16H4z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          Demo OTP: <b id="loginDemoOtp">123456</b>
+        </div>
+
+        <div class="login-field">
+          <label class="login-label">Enter OTP</label>
+          <input class="login-input" id="loginOtp" type="tel" inputmode="numeric" maxlength="6"
+            placeholder="6-digit OTP" autocomplete="one-time-code">
+          <p class="login-error" id="loginOtpErr">Incorrect OTP. Please try again.</p>
+        </div>
+
+        <button class="login-btn" id="loginVerifyBtn">Verify & Continue</button>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;">
+          <button class="login-back" id="loginBackBtn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+            Change number
+          </button>
+          <button class="login-back" id="loginResendBtn">Resend OTP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ HEADER ============ -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo" onclick="resetAll()">
+        <span class="logo-mark">CF</span>
+        <span class="logo-text">Cartify<small>compare · save · shop</small></span>
+      </div>
+      <div class="search-wrap">
+        <div class="search-box">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="16.5" y1="16.5" x2="21" y2="21" />
+          </svg>
+          <input id="searchInput" type="search" placeholder="Search across Flipkart, Amazon, Myntra, Meesho…"
+            autocomplete="off">
+          <button class="search-clear" id="searchClear" hidden>&times;</button>
+        </div>
+        <div class="suggest" id="suggestBox" hidden></div>
+      </div>
+      <div class="header-actions">
+        <div class="user-wrap">
+          <button class="user-pill" id="userPill" aria-label="Account">
+            <span class="user-avatar" id="userAvatar">G</span>
+            <span id="userName">Guest</span>
+          </button>
+          <div class="user-menu" id="userMenu" hidden>
+            <div class="user-menu-head">
+              <b id="userMenuName">Guest User</b>
+              <small id="userMenuMobile">Not signed in</small>
+            </div>
+            <button class="user-menu-item" id="userMenuWish">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+              </svg>
+              My Wishlist
+            </button>
+            <button class="user-menu-item" id="userMenuLocation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              Refresh Location
+            </button>
+            <button class="user-menu-item danger" id="userMenuLogout">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        </div>
+        <button class="icon-btn" id="wishBtn" aria-label="Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path
+              d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 1 0-7.8 7.8l1 1L12 21.2l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z" />
+          </svg>
+          <span class="badge wish hidden" id="wishBadge">0</span>
+        </button>
+        <button class="icon-btn" id="cartBtn" aria-label="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M6 6h15l-1.5 9h-12z" />
+            <path d="M6 6 5 3H2" />
+            <circle cx="9" cy="20" r="1.5" />
+            <circle cx="18" cy="20" r="1.5" />
+          </svg>
+          <span class="badge hidden" id="cartBadge">0</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="pincode-bar">
+      <div class="pincode-inner">
+        <span class="pincode-label">Deliver to</span>
+        <div class="pincode-input-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <input id="pincodeInput" placeholder="Pincode" maxlength="6" inputmode="numeric">
+        </div>
+        <span class="pincode-result" id="pincodeResult"></span>
+        <span id="autoLocBadgeWrap"></span>
+        <button class="pincode-refresh" id="pincodeRefreshBtn" title="Auto-detect my location">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" />
+            <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" />
+          </svg>
+          Auto-detect
+        </button>
+        <span class="pincode-tag">📦 Free delivery over ₹999 · 🔄 7-day returns</span>
+      </div>
+    </div>
+
+    <nav class="catnav">
+      <div class="catnav-inner" id="catnav"></div>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-card">
+      <div>
+        <span class="hero-eyebrow">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" />
+          </svg>
+          Today's best savings
+        </span>
+        <h1>One search. <em>Every store</em> compared.</h1>
+        <p>We check Flipkart, Amazon, Myntra, Meesho, ShopClues, Ajio and Croma — then show you the real price after
+          offers, delivery and taxes. No more tab-hopping.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="document.getElementById('searchInput').focus()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+              stroke-linecap="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="16.5" y1="16.5" x2="21" y2="21" />
+            </svg>
+            Start searching
+          </button>
+          <button class="btn" onclick="scrollToProducts()">Browse deals</button>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="num" id="statProducts">0</div>
+          <div class="lbl">Products tracked</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="statStores">0</div>
+          <div class="lbl">Stores compared</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="statOffers">0</div>
+          <div class="lbl">Live offers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="num" id="statSaved">₹0</div>
+          <div class="lbl">Avg. saving per order</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAIN -->
+  <main class="layout" id="productsTop">
+    <aside class="filters" id="filtersPanel">
+      <div class="filters-head">
+        <h3>Filters</h3><button id="resetFilters">Reset all</button>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="catBody">Category <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body chips" id="catBody"></div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="brandBody">Brand <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body" id="brandBody"></div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="priceBody">Price range <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body" id="priceBody">
+          <div class="range-wrap"><input type="range" id="priceRange" min="300" max="150000" step="500" value="150000">
+            <div class="range-lbl"><span>₹300</span><span id="priceLabel">Any</span></div>
+          </div>
+          <div class="chips" id="priceQuick" style="margin-top:6px;"></div>
+        </div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="storeBody">Stores <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body" id="storeBody"></div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="ratingBody">Rating <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body chips" id="ratingBody"></div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="discBody">Discount <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body chips" id="discBody"></div>
+      </div>
+      <div class="fgroup">
+        <div class="fgroup-title" data-collapse="delBody">Delivery <svg class="chev" width="14" height="14"
+            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <polyline points="6 9 12 15 18 9" />
+          </svg></div>
+        <div class="fgroup-body chips" id="delBody"></div>
+      </div>
+    </aside>
+    <section>
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button class="btn btn-sm mobile-filter-btn" id="openFilters">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="6" y1="12" x2="18" y2="12" />
+              <line x1="10" y1="18" x2="14" y2="18" />
+            </svg>
+            Filters <span id="filterCount"></span>
+          </button>
+          <h2 id="resultsTitle">All products</h2>
+          <span class="count" id="resultsCount"></span>
+        </div>
+        <div class="toolbar-right">
+          <label class="sort-wrap">Sort
+            <select id="sortSelect">
+              <option value="relevance">Recommended</option>
+              <option value="price-asc">Price: low → high</option>
+              <option value="price-desc">Price: high → low</option>
+              <option value="rating">Top rated</option>
+              <option value="discount">Biggest discount</option>
+              <option value="spread">Biggest store gap</option>
+            </select>
+          </label>
+        </div>
+      </div>
+      <div class="active-filters" id="activeFilters"></div>
+      <div class="grid" id="productGrid"></div>
+      <div class="recent-wrap" id="recentWrap" hidden>
+        <div class="recent-head">
+          <h3>Recently viewed</h3><button id="clearRecent">Clear</button>
+        </div>
+        <div class="recent-strip" id="recentStrip"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="logo" style="margin-bottom:10px;"><span class="logo-mark">SR</span><span
+            class="logo-text">ShopRadar<small>compare · save · shop</small></span></div>
+        <p>A student mini-project about comparing prices before you buy. All product prices, offers, store ratings and
+          images shown here are for demonstration only.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">How comparison works</a></li>
+          <li><a href="#">Price alerts</a></li>
+          <li><a href="#">Coupons & offers</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#">Terms of use</a></li>
+          <li><a href="#">Privacy policy</a></li>
+          <li><a href="#">Disclosure</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 ShopRadar · Built with plain HTML, CSS & JavaScript</span>
+      <span>No trackers. No real orders. Just a college project.</span>
+    </div>
+  </footer>
+
+  <!-- COMPARE TRAY -->
+  <div class="cmp-tray" id="cmpTray">
+    <div class="tray-label">Compare</div>
+    <div class="cmp-items" id="cmpItems"></div>
+    <div class="tray-actions">
+      <button class="btn btn-sm" id="cmpClear">Clear</button>
+      <button class="btn btn-sm btn-primary" id="cmpGo">Compare now</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- CART DRAWER -->
+  <aside class="drawer" id="cartDrawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>Your cart <small id="cartSub">0 items</small></h2><button class="drawer-close"
+        data-close-drawer="cart">&times;</button>
+    </div>
+    <div class="drawer-body" id="cartBody"></div>
+    <div class="drawer-foot" id="cartFoot"></div>
+  </aside>
+
+  <!-- WISHLIST DRAWER -->
+  <aside class="drawer" id="wishDrawer" aria-hidden="true">
+    <div class="drawer-head">
+      <h2>Wishlist <small id="wishSub">0 items</small></h2><button class="drawer-close"
+        data-close-drawer="wish">&times;</button>
+    </div>
+    <div class="drawer-body" id="wishBody"></div>
+  </aside>
+
+  <!-- QUICK VIEW -->
+  <div class="modal-wrap" id="qvWrap">
+    <div class="modal qv"><button class="modal-close" data-close-modal="qv">&times;</button>
+      <div class="qv-grid" id="qvBody"></div>
+    </div>
+  </div>
+
+  <!-- COMPARE MODAL -->
+  <div class="modal-wrap" id="cmpWrap">
+    <div class="modal compare-modal">
+      <button class="modal-close" data-close-modal="cmp">&times;</button>
+      <div class="compare-head">
+        <h2>Side-by-side comparison</h2>
+        <p id="cmpSubtitle"></p>
+      </div>
+      <div class="compare-grid" id="cmpBody"></div>
+    </div>
+  </div>
+
+  <!-- ALERT MODAL -->
+  <div class="modal-wrap" id="alertWrap">
+    <div class="modal" style="max-width:440px;">
+      <button class="modal-close" data-close-modal="alert">&times;</button>
+      <div style="padding:30px;">
+        <h2 style="font-family:var(--serif);font-size:20px;margin-bottom:6px;">Set price alert</h2>
+        <p style="color:var(--text-3);font-size:13px;margin-bottom:18px;">We'll notify you when the price drops below
+          your target.</p>
+        <div id="alertProduct"
+          style="background:var(--surface-2);border:1px solid var(--border);border-radius:11px;padding:14px;margin-bottom:16px;display:flex;gap:12px;align-items:center;">
+        </div>
+        <label
+          style="display:block;font-size:11.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);margin-bottom:6px;">Target
+          price</label>
+        <input id="alertPrice" type="number"
+          style="width:100%;border:1.5px solid var(--border-2);border-radius:9px;padding:11px 13px;font-size:14px;outline:none;">
+        <p id="alertHint" style="font-size:12px;color:var(--text-3);margin-top:6px;"></p>
+        <button class="btn btn-primary" id="alertSave" style="width:100%;margin-top:16px;padding:12px;">Save
+          alert</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT -->
+  <div class="checkout-screen" id="checkoutScreen">
+    <header class="co-header">
+      <div class="co-logo"><span class="co-logo-mark">SR</span>ShopRadar</div>
+      <span class="co-secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" />
+          <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+        </svg>
+        100% Secure
+      </span>
+      <button class="co-close" id="coClose">&times;</button>
+    </header>
+    <div class="co-steps">
+      <div class="co-steps-inner" id="coSteps"></div>
+    </div>
+    <div class="co-content">
+      <div class="co-content-inner" id="coContent"></div>
+    </div>
+    <footer class="co-footer" id="coFooter"></footer>
+  </div>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
