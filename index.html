@@ -21,6 +21,11 @@
 
       <!-- Mobile step -->
       <div id="loginStepMobile">
+        <div class="login-methods" role="tablist" aria-label="Sign in method">
+          <button class="login-method active" id="loginMobileTab" type="button" role="tab" aria-selected="true">Mobile</button>
+          <button class="login-method" id="loginEmailTab" type="button" role="tab" aria-selected="false">Email</button>
+        </div>
+        <div id="loginMobileForm">
         <div class="login-field">
           <label class="login-label">Mobile Number</label>
           <div class="login-mobile-row">
@@ -37,11 +42,33 @@
             updates.</label>
         </div>
 
+        <label class="login-remember login-mobile-remember"><input type="checkbox" id="loginMobileRemember"> Remember me</label>
+
         <button class="login-btn" id="loginSendBtn">Send OTP</button>
 
         <div class="login-divider">or</div>
 
         <button class="login-guest" id="loginGuestBtn">Continue as Guest</button>
+        </div>
+
+        <div id="loginEmailForm" hidden>
+          <div class="login-field">
+            <label class="login-label" for="loginEmail">Email address</label>
+            <input class="login-input" id="loginEmail" type="email" autocomplete="email" placeholder="you@example.com">
+            <p class="login-error" id="loginEmailErr">Enter a valid email address</p>
+          </div>
+          <div class="login-field">
+            <label class="login-label" for="loginPassword">Password</label>
+            <input class="login-input" id="loginPassword" type="password" autocomplete="current-password" placeholder="At least 8 characters">
+            <p class="login-error" id="loginPasswordErr">Password must be at least 8 characters</p>
+          </div>
+          <div class="login-options">
+            <label class="login-remember"><input type="checkbox" id="loginRemember"> Remember me</label>
+            <button class="login-link" id="loginModeToggle" type="button">Create account</button>
+          </div>
+          <button class="login-btn" id="loginEmailBtn" type="button">Sign in</button>
+          <p class="login-demo-note">Demo sign-in only. Use any valid email and an 8+ character password.</p>
+        </div>
 
         <div class="login-perks">
           <div class="login-perk">

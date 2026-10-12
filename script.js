@@ -447,15 +447,19 @@
 
     function loadAuth() {
       try {
-        const d = JSON.parse(localStorage.getItem(AUTH_KEY) || 'null');
-        if (d && d.mobile) authUser = d;
+        const d = JSON.parse(sessionStorage.getItem(AUTH_KEY) || localStorage.getItem(AUTH_KEY) || 'null');
+        if (d && (d.mobile || d.email)) authUser = d;
       } catch (e) { }
       updateUserUI();
     }
 
     function saveAuth() {
-      if (authUser) localStorage.setItem(AUTH_KEY, JSON.stringify(authUser));
-      else localStorage.removeItem(AUTH_KEY);
+      localStorage.removeItem(AUTH_KEY);
+      sessionStorage.removeItem(AUTH_KEY);
+      if (authUser) {
+        const storage = authUser.remember ? localStorage : sessionStorage;
+        storage.setItem(AUTH_KEY, JSON.stringify(authUser));
+      }
     }
 
     function updateUserUI() {
@@ -468,7 +472,7 @@
         avatar.textContent = display.charAt(0).toUpperCase();
         name.textContent = display;
         menuName.textContent = display;
-        menuMobile.textContent = '+91 ' + authUser.mobile;
+        menuMobile.textContent = authUser.email || ('+91 ' + authUser.mobile);
       } else {
         avatar.textContent = 'G';
         name.textContent = 'Guest';
@@ -512,6 +516,48 @@
       const otpInput = document.getElementById('loginOtp');
       const stepMobile = document.getElementById('loginStepMobile');
       const stepOtp = document.getElementById('loginStepOtp');
+      const mobileForm = document.getElementById('loginMobileForm');
+      const emailForm = document.getElementById('loginEmailForm');
+      const emailTab = document.getElementById('loginEmailTab');
+      const mobileTab = document.getElementById('loginMobileTab');
+      let creatingAccount = false;
+
+      function setLoginMethod(method) {
+        const emailMode = method === 'email';
+        mobileForm.hidden = emailMode;
+        emailForm.hidden = !emailMode;
+        emailTab.classList.toggle('active', emailMode);
+        mobileTab.classList.toggle('active', !emailMode);
+        emailTab.setAttribute('aria-selected', String(emailMode));
+        mobileTab.setAttribute('aria-selected', String(!emailMode));
+        if (emailMode) document.getElementById('loginEmail').focus();
+      }
+      emailTab.addEventListener('click', () => setLoginMethod('email'));
+      mobileTab.addEventListener('click', () => setLoginMethod('mobile'));
+      document.getElementById('loginModeToggle').addEventListener('click', () => {
+        creatingAccount = !creatingAccount;
+        document.getElementById('loginEmailBtn').textContent = creatingAccount ? 'Sign up' : 'Sign in';
+        document.getElementById('loginModeToggle').textContent = creatingAccount ? 'Back to sign in' : 'Create account';
+        document.getElementById('loginPassword').autocomplete = creatingAccount ? 'new-password' : 'current-password';
+      });
+      document.getElementById('loginEmailBtn').addEventListener('click', () => {
+        const emailInput = document.getElementById('loginEmail');
+        const passwordInput = document.getElementById('loginPassword');
+        const email = emailInput.value.trim().toLowerCase();
+        const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        const passwordValid = passwordInput.value.length >= 8;
+        document.getElementById('loginEmailErr').classList.toggle('show', !emailValid);
+        document.getElementById('loginPasswordErr').classList.toggle('show', !passwordValid);
+        emailInput.classList.toggle('err', !emailValid);
+        passwordInput.classList.toggle('err', !passwordValid);
+        if (!emailValid || !passwordValid) return;
+        const name = email.split('@')[0].replace(/[._-]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        completeLogin({ email, name, remember: document.getElementById('loginRemember').checked });
+        if (creatingAccount) showToast('Demo account created');
+      });
+      document.getElementById('loginPassword').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('loginEmailBtn').click();
+      });
 
       mobileInput.addEventListener('input', () => {
         mobileInput.value = mobileInput.value.replace(/\D/g, '').slice(0, 10);
@@ -552,7 +598,7 @@
           otpInput.classList.add('err');
           return;
         }
-        completeLogin({ mobile: tempMobile, name: 'User' });
+        completeLogin({ mobile: tempMobile, name: 'User', remember: document.getElementById('loginMobileRemember').checked });
       });
 
       document.getElementById('loginBackBtn').addEventListener('click', () => {
